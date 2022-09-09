@@ -1,0 +1,91 @@
+<html>
+    <body>
+        <form  onsubmit="saveToLocalStorage(event)">
+            <label> Expense</label>
+            <input id='ammountexpense' type="number" name="ammountexpense"  required/>
+            <label> Description</label>
+            <input id='descript' type="text" name="description"  required/>
+            <label> Category</label>
+            <input id='category' type="text" name="category" />
+            <button> Add Expense </button>
+        </form>
+        <ul id='listOfAmmounts'>
+        </ul>
+        <script>
+            function saveToLocalStorage(event) {
+                event.preventDefault();
+                const expense= event.target.ammountexpense.value;
+                const descript = event.target.description.value;
+                const category = event.target.category.value;
+                // localStorage.setItem('name', name);
+                // localStorage.setItem('email', email);
+                // localStorage.setItem('phonenumber', phonenumber)
+                const obj = {
+                    expense,
+                    descript,
+                    category
+                }
+                localStorage.setItem(obj.descript, JSON.stringify(obj))
+                showNewAmmountOnScreen(obj)
+            }
+
+            window.addEventListener("DOMContentLoaded", () => {
+                const localStorageObj = localStorage;
+                const localstoragekeys  = Object.keys(localStorageObj)
+
+                for(var i =0; i< localstoragekeys.length; i++){
+                    const key = localstoragekeys[i]
+                    const ammountDetailsString = localStorageObj[key];
+                    const ammountDetailsObj = JSON.parse(ammountDetailsString);
+                    showNewAmmountOnScreen(ammountDetailsObj)
+                }
+            })
+
+            function showNewAmmountOnScreen(ammount){
+                document.getElementById('descript').value = '';
+                document.getElementById('ammountexpense').value = '';
+                document.getElementById('category').value ='';
+                // console.log(localStorage.getItem(ammount.description))
+                if(localStorage.getItem(ammount.descript) !== null){
+                    removeAmmountFromScreen(ammount.descript)
+                }
+
+                const parentNode = document.getElementById('listOfAmmounts');
+                const childHTML = `<li id=${ammount.descript}> ${ammount.expense} - ${ammount.descript}
+                                        <button onclick=deleteAmmount('${ammount.descript}')> Delete Ammount </button>
+                                        <button onclick=editAmmountDetails('${ammount.descript}','${ammount.expense}','${ammount.category}')>Edit Ammount </button>
+                                     </li>`
+
+                parentNode.innerHTML = parentNode.innerHTML + childHTML;
+            }
+
+            //Edit Ammount
+
+            function editAmmountDetails(description, expense, category){
+
+                document.getElementById('descript').value = description;
+                document.getElementById('ammountexpense').value = expense;
+                document.getElementById('category').value =category;
+
+                deleteAmmount(description)
+             }
+
+            // deleteAmmount('movie')
+
+            function deleteAmmount(description){
+                console.log(description)
+                localStorage.removeItem(description);
+                removeAmmountFromScreen(description);
+
+            }
+
+            function removeAmmountFromScreen(description){
+                const parentNode = document.getElementById('listOfAmmounts');
+                const childNodeToBeDeleted = document.getElementById(description);
+                if(childNodeToBeDeleted) {
+                    parentNode.removeChild(childNodeToBeDeleted)
+                }
+            }
+        </script>
+    </body>
+</html>
