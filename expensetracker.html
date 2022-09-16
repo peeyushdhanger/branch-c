@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>trial</title>
+</head>
+<body>
+    <form onsubmit="saveToLocalStorage(event)" >
+         <label>Chhose Expense ammount</label> <!--booking apointment app -->
+        <input id="expenseammount" type="number" name="expenseammount" required/>
+        <label>Choose Description</label>
+        <input id="description" type="text" name="description" required/>
+        <label>Choose a Category</label>
+        <input id="category" type="text" name="category" required/>
+        <button>Add Expense</button>
+    </form>
+    <ul id='listOfExpense'>
+    </ul>
+    <script>
+        function saveToLocalStorage(event){
+            event.preventDefault();
+            const expenseammount = event.target.expenseammount.value;
+            const description  = event.target.description.value;
+            const category = event.target.category.value;
+            // localStorage.setItem('expenseammount', expenseammount)
+            // localStorage.setItem('description', description)
+            // localStorage.setItem('category', category)
+            const obj = {
+                expenseammount,
+                description,
+                category
+                }
+                localStorage.setItem(obj.description, JSON.stringify(obj))
+                showNewExpenseOnScreen(expensetDetailsObj)
+                // console.log(Object.keys(obj))//[key1, key2, key3]
+                // const keyArr = Object.keys(obj)
+
+                // keyArr.forEach(key => {
+                //     console.log(obj[key])
+                // })
+
+        }
+        window.addEventListener("DOMContentLoaded", () => {
+                const localStorageObj = localStorage;
+                const localstoragekeys  = Object.keys(localStorageObj)
+
+                for(var i =0; i< localstoragekeys.length; i++){
+                    const key = localstoragekeys[i]
+                    const expenseDetailsString = localStorageObj[key];
+                    const expenseDetailsObj = JSON.parse(expenseDetailsString);
+                    showNewExpenseOnScreen(expenseDetailsObj)
+                }
+            })
+        function showNewExpenseOnScreen(expense){
+                document.getElementById('category').value = '';
+                document.getElementById('expenseammount').value = '';
+                document.getElementById('description').value ='';
+                // console.log(localStorage.getItem(expense.category))
+                // if(localStorage.getItem(expense.category) !== null){
+                //     removeExpenseFromScreen(expense.category)
+                // }
+
+                 const parentNode = document.getElementById('listOfExpense');
+                const childHTML = `<li id=${expense.category}> ${expense. expenseammount} - ${expense.category} -${expense.description}
+                                         <button onclick=deleteExpense('${expense.category}')> Delete Expense </button>
+                                         <button onclick=editExpenseDetails('${expense.category}','${expense.expenseammount}','${expense.expensedescription}')>Edit Expense </button>
+                                     </li>`
+
+                parentNode.innerHTML = parentNode.innerHTML + childHTML;
+            }
+            //Edit User
+
+            function editExpenseDetails(category, expenseammount ,description){
+
+                document.getElementById('category').value = category;
+                document.getElementById('expenseammount').value = expenseammount;
+                document.getElementById('description').value = description;
+
+                deleteExpense(category)
+            }
+            //delete expense
+            function deleteExpense(category){
+                console.log(category);
+                localStorage.removeItem(category)
+                removeExpenseFromScreen(category)
+            }
+            function removeExpenseFromScreen(category){
+                const parentNode = document.getElementById('listOfExpense');
+                const childNodeToBeDeleted = document.getElementById (category);
+                if(childNodeToBeDeleted) {
+                parentNode.removeChild(childNodeToBeDeleted)
+                }
+
+            }
+        
+    </script>
+</body>
+</html>
